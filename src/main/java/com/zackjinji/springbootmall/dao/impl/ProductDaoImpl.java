@@ -30,7 +30,7 @@ public class ProductDaoImpl implements ProductDao {
                 "FROM product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<>();
-
+//      - 查詢條件
         if (productQueryParams.getCategory() != null) {
             sql = sql + " AND category = :category";
             map.put("category", productQueryParams.getCategory().name());
@@ -41,10 +41,15 @@ public class ProductDaoImpl implements ProductDao {
             map.put("search", "%" + productQueryParams.getSearch() + "%");
 
         }
+//      - 排序
 //        Spring JDBC的ORDER BY只能用字串拼接方式，無法使用sql變數方式寫
 //        controller已defaultValue，不需null判斷
 //        sql語句記得空格避免黏住
         sql = sql + " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
+//      - 分頁
+        sql = sql + " LIMIT :limit OFFSET :offset";
+        map.put("limit", productQueryParams.getLimit());
+        map.put("offset", productQueryParams.getOffset());
 
         List<Product> products = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
         return products;
