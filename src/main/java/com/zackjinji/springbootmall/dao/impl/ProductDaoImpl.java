@@ -1,23 +1,16 @@
 package com.zackjinji.springbootmall.dao.impl;
 
-import com.zackjinji.springbootmall.constant.ProductCategory;
 import com.zackjinji.springbootmall.dao.ProductDao;
+import com.zackjinji.springbootmall.dto.ProductQueryParams;
 import com.zackjinji.springbootmall.dto.ProductRequest;
 import com.zackjinji.springbootmall.model.Product;
 import com.zackjinji.springbootmall.rowmapper.ProductRowMapper;
-import com.zackjinji.springbootmall.service.ProductService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -31,23 +24,27 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 
-    public List<Product> getProducts(ProductCategory category,String search) {
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
         String sql = "SELECT product_id, product_name, category, image_url, price, stock, description, " +
                 "created_date, last_modified_date "+
                 "FROM product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<>();
 
-        if (category != null) {
+        if (productQueryParams.getCategory() != null) {
             sql = sql + " AND category = :category";
-            map.put("category", category.name());
+            map.put("category", productQueryParams.getCategory().name());
         }
 
-        if (search != null) {
+        if (productQueryParams.getSearch() != null) {
             sql = sql + " AND product_name LIKE :search";
-            map.put("search", "%" + search + "%");
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
 
         }
+//        Spring JDBC的ORDER BY只能用字串拼接方式，無法使用sql變數方式寫
+//        controller已defaultValue，不需null判斷
+//        sql語句記得空格避免黏住
+        sql = sql + " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
 
         List<Product> products = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
         return products;

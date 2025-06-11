@@ -1,6 +1,7 @@
 package com.zackjinji.springbootmall.controller;
 
 import com.zackjinji.springbootmall.constant.ProductCategory;
+import com.zackjinji.springbootmall.dto.ProductQueryParams;
 import com.zackjinji.springbootmall.dto.ProductRequest;
 import com.zackjinji.springbootmall.model.Product;
 import com.zackjinji.springbootmall.service.ProductService;
@@ -23,10 +24,20 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getProducts(
+//            查詢條件Filtering
            @RequestParam(required = false) ProductCategory category,
-           @RequestParam(required = false) String search
+           @RequestParam(required = false) String search,
+//              排序sorting
+           @RequestParam (defaultValue = "created_date")String orderBy,
+           @RequestParam (defaultValue = "desc")String sort
     ){
-        List<Product> productList = productService.getProducts(category, search);
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setCategory(category);
+        productQueryParams.setSearch(search);
+        productQueryParams.setOrderBy(orderBy);
+        productQueryParams.setSort(sort);
+
+        List<Product> productList = productService.getProducts(productQueryParams);
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
 
