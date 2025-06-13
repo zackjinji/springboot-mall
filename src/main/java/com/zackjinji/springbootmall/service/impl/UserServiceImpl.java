@@ -1,6 +1,7 @@
 package com.zackjinji.springbootmall.service.impl;
 
 import com.zackjinji.springbootmall.dao.UserDao;
+import com.zackjinji.springbootmall.dto.UserLoginRequest;
 import com.zackjinji.springbootmall.dto.UserRegisterRequest;
 import com.zackjinji.springbootmall.model.User;
 import com.zackjinji.springbootmall.service.UserService;
@@ -14,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Component
 public class UserServiceImpl implements UserService {
 
-   private final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserDao userDao;
@@ -29,11 +30,32 @@ public class UserServiceImpl implements UserService {
 //        檢查註冊的Email
         User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
 
-        if(user != null) {
+        if (user != null) {
             logger.warn("該 Email {} 已經被註冊", userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 //          註冊
         return userDao.createUser(userRegisterRequest);
     }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+        if (user == null) {
+            logger.warn("該 Email {} 尚未註冊", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+
+        }
+
+        if (user.getPassword().equals(userLoginRequest.getPassword())) {
+            return user;
+        } else {
+            logger.warn("email {} 的密碼不正確", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
 }
