@@ -1,4 +1,4 @@
-# Spring Boot 簡易商城 API 專案
+# Spring Boot 簡易電商 API 專案
 <br>
 
 
@@ -29,14 +29,13 @@
 
     * 使用者註冊
     * 使用者登入（回傳 JWT Token）
-    * Token 驗證與授權攔截
 ✅ 商品功能
 
     * 商品查詢（支援條件過濾與分頁）
-    * 商品新增／修改（管理端預留）
+    * 商品新增/查詢/修改/刪除（CRUD)
 ✅ 訂單功能
 
-    * 建立訂單（含購物車品項）
+    * 建立訂單
     * 查詢使用者訂單清單與明細
 
 🧪 測試與驗證
@@ -49,11 +48,8 @@
 
     * Java 21
     * Spring Boot
-    * Spring Web
-    * Spring JDBC
-    * HikariCP
+    * Spring JDBC / Data JPA
     * MySQL / H2
-    * JWT（io.jsonwebtoken）
     * JUnit 5 + Mockito
     * Maven
 
@@ -72,13 +68,9 @@ rust
       ├── util
       └── SpringbootMallApplication.java
 
-🔗 作品連結
-
-    GitHub Repo 👉 https://github.com/zackjinji/springboot-mall/
 
 🧠 學習收穫
 
     * 熟悉 Spring Boot 應用的三層架構設計。
     * 實作 JWT 驗證流程並整合於 API 安全機制中。
     * 建立一個具備實際商業邏輯的電商後端系統。
-    * 對 DAO 分層設計、資料映射（RowMapper）與單元測試有更深刻理解。
